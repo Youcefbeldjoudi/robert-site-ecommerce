@@ -1,7 +1,6 @@
 import Head from 'next/head';
 import { useEffect, useMemo, useState } from 'react';
 
-const ADMIN_EMAIL = 'admin@rkn.dz';
 const THEME_STORAGE_KEY = 'rkn_theme';
 const USER_STORAGE_KEY = 'rkn_users';
 const CURRENT_USER_KEY = 'rkn_currentUser';
@@ -135,7 +134,7 @@ export default function Home() {
       save('token', data.token);
       setCurrentUser(data.user);
       showToast(`Bienvenue, ${data.user.name.split(' ')[0]} !`, 'success');
-      if (data.user.email === ADMIN_EMAIL) return setView('admin');
+      if (data.user.isAdmin) return setView('admin');
       setView('catalog');
     } catch (err) {
       showToast('Erreur serveur', 'error');
@@ -271,7 +270,7 @@ export default function Home() {
             {!currentUser && <div className="icon-btn" onClick={() => { setView('auth'); setAuthMode('login'); }} title="Connexion">👤</div>}
             {currentUser && <div className="icon-btn" onClick={() => setView('account')} title="Mon compte">👤</div>}
           </div>
-          {currentUser?.email === ADMIN_EMAIL && <div id="nav-admin-btn"><div className="icon-btn" onClick={() => setView('admin')} title="Admin">⚙️</div></div>}
+          {currentUser?.isAdmin && <div id="nav-admin-btn"><div className="icon-btn" onClick={() => setView('admin')} title="Admin">⚙️</div></div>}
         </div>
       </nav>
 
@@ -372,9 +371,6 @@ export default function Home() {
                     <button className="btn btn-primary btn-full" onClick={() => doLogin(authEmail.trim(), authPassword)}>Se connecter</button>
                   </div>
                   <div className="auth-switch">Pas encore de compte ? <span onClick={() => { setAuthMode('register'); setAuthEmail(''); setAuthPassword(''); }}>Créer un compte</span></div>
-                  <div style={{ textAlign: 'center', marginTop: 16, padding: 12, background: 'var(--bg3)', borderRadius: 'var(--radius)', fontSize: 11, color: 'var(--text2)' }}>
-                    Admin: <strong style={{ color: 'var(--accent)' }}>admin@rkn.dz</strong> / <strong>admin123</strong>
-                  </div>
                 </>
               ) : (
                 <>
@@ -589,7 +585,7 @@ export default function Home() {
         </div>
       )}
 
-      {view === 'admin' && currentUser?.email === ADMIN_EMAIL && (
+      {view === 'admin' && currentUser?.isAdmin && (
         <div id="admin-view" className="view active">
           <div className="admin-layout">
             <aside className="admin-sidebar">
